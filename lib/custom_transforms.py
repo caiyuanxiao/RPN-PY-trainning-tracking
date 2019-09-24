@@ -2,7 +2,7 @@ import torch
 import numpy as np
 import cv2
 
-
+#图像缩放
 class RandomStretch(object):
     def __init__(self, max_stretch=0.05):
         """Random resize image according to the stretch
@@ -11,18 +11,24 @@ class RandomStretch(object):
         """
         self.max_stretch = max_stretch
 
-    def __call__(self, sample):
+    def __call__(self, sample):    #使用call方法，使实例对象成为一个可调用对象
+                
         """
         Args:
-            sample(numpy array): 3 or 1 dim image
+            sample(numpy array): 3 or 1 dim image  #一维或三维图像
         """
-        scale_h = 1.0 + np.random.uniform(-self.max_stretch, self.max_stretch)
+        scale_h = 1.0 + np.random.uniform(-self.max_stretch, self.max_stretch) # numpy.random.uniform(low,high,size)，表示
+                                                                               #从一个均匀分布[low,high)中随机采样，
+                                                                               #low: 采样下界，float类型，默认值为0；
+                                                                               # high: 采样上界，float类型，默认值为1；
+                                                                               #size: 输出样本数目，为int或元组(tuple)类型，
+                                                                               #返回值：ndarray类型，其形状和参数size中描述一致。
         scale_w = 1.0 + np.random.uniform(-self.max_stretch, self.max_stretch)
-        h, w = sample.shape[:2]
+        h, w = sample.shape[:2]            #shape是numpy中的函数，功能是查看矩阵或数组的维数
         shape = int(w * scale_w), int(h * scale_h)
-        return cv2.resize(sample, shape, cv2.INTER_LINEAR)
+        return cv2.resize(sample, shape, cv2.INTER_LINEAR) #缩放图像，sample原图像，shape目标图像，方法inter_linear双线性插值
 
-
+#图像裁剪
 class CenterCrop(object):
     def __init__(self, size):
         """Crop the image in the center according the given size 
@@ -60,8 +66,8 @@ class CenterCrop(object):
         im_patch = sample[ymin:ymax, xmin:xmax]
         if left != 0 or right != 0 or top != 0 or bottom != 0:
             im_patch = cv2.copyMakeBorder(im_patch, top, bottom, left, right,
-                                          cv2.BORDER_CONSTANT, value=0)
-        return im_patch
+                                          cv2.BORDER_CONSTANT, value=0)       #使用copymakeborder进行padding
+        return im_patch 
 
 
 class RandomCrop(object):
@@ -114,7 +120,7 @@ class RandomCrop(object):
                                           cv2.BORDER_CONSTANT, value=0)
         return im_patch
 
-
+#颜色增强
 class ColorAug(object):
     def __init__(self, type_in='z'):
         if type_in == 'z':
@@ -131,7 +137,7 @@ class ColorAug(object):
     def __call__(self, sample):
         return sample + 0.1 * self.v * np.random.randn(3)
 
-
+#随机模糊
 class RandomBlur(object):
     def __init__(self, ratio):
         self.ratio = ratio
@@ -146,7 +152,7 @@ class RandomBlur(object):
         else:
             return sample
 
-
+#标准化
 class Normalize(object):
     def __init__(self):
         self.mean = np.array([0.485, 0.456, 0.406], dtype=np.float32)
