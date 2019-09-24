@@ -16,20 +16,25 @@ class SiameseAlexNet(nn.Module):
     def __init__(self, ):
         super(SiameseAlexNet, self).__init__()
         self.featureExtract = nn.Sequential(
+            #第一层
             nn.Conv2d(3, 96, 11, stride=2),
             nn.BatchNorm2d(96),
             nn.MaxPool2d(3, stride=2),
             nn.ReLU(inplace=True),
+            #第二层
             nn.Conv2d(96, 256, 5),
             nn.BatchNorm2d(256),
             nn.MaxPool2d(3, stride=2),
             nn.ReLU(inplace=True),
+           #第三层
             nn.Conv2d(256, 384, 3),
             nn.BatchNorm2d(384),
             nn.ReLU(inplace=True),
+           #第四层
             nn.Conv2d(384, 384, 3),
             nn.BatchNorm2d(384),
             nn.ReLU(inplace=True),
+          #第五层
             nn.Conv2d(384, 256, 3),
             nn.BatchNorm2d(256),
         )
